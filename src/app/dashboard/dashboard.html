@@ -1,0 +1,228 @@
+
+<header class="bank-header">
+  <a routerLink="/dashboard" class="brand">
+    <span class="brand-icon">B</span>
+    <span>BankingEase</span>
+  </a>
+
+  <nav class="nav-links">
+    <a routerLink="/dashboard" routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+    <a routerLink="/beneficiaries" routerLinkActive="active">Beneficiaries</a>
+    <a routerLink="/bills" routerLinkActive="active">Bill Payments</a>
+    <a routerLink="/loans" routerLinkActive="active">Loans</a>
+    <a routerLink="/investments" routerLinkActive="active">Investments</a>
+  </nav>
+
+  <button class="logout-btn" type="button" (click)="logout()">Logout</button>
+</header>
+
+<main class="dashboard-container">
+  <section class="welcome-section">
+    <p class="eyebrow">PERSONAL BANKING</p>
+    <h1>Welcome back!</h1>
+    <p>Manage your accounts and move your money securely.</p>
+  </section>
+
+  <!-- My accounts -->
+  <section class="content-card">
+    <h2>My Accounts</h2>
+    <p>View your linked bank accounts and available balances.</p>
+
+    <p *ngIf="balanceError" class="error-message">{{ balanceError }}</p>
+
+    <div *ngIf="accounts.length > 0; else noAccounts"
+         class="account-grid">
+      <article class="account-card" *ngFor="let account of accounts">
+        <p class="eyebrow">{{ account.accountType || 'Bank Account' }}</p>
+        <h3>Account {{ account.accountNumber }}</h3>
+        <h2>₹{{ account.balance | number:'1.2-2' }}</h2>
+        <span class="status-pill">Available account</span>
+      </article>
+    </div>
+
+    <ng-template #noAccounts>
+      <p *ngIf="balanceError">Accounts could not be loaded. Please check your connection.</p>
+      <p *ngIf="!balanceError">No accounts are available to display.</p>
+    </ng-template>
+  </section>
+
+  <!-- Banking operations -->
+  <section class="content-card">
+    <h2>Manage Your Money</h2>
+    <p>Choose an operation below.</p>
+
+    <p *ngIf="transactionError" class="error-message">
+      {{ transactionError }}
+    </p>
+    <p *ngIf="transactionMessage" class="success-message">
+      {{ transactionMessage }}
+    </p>
+
+    <div class="quick-actions">
+      <button class="action-card" type="button"
+              (click)="transactionError = ''; transactionMessage = ''">
+        <span>
+          <strong>Deposit Money</strong>
+          Add money to your account
+        </span>
+      </button>
+      <button class="action-card" type="button"
+              (click)="transactionError = ''; transactionMessage = ''">
+        <span>
+          <strong>Withdraw Money</strong>
+          Withdraw from your account
+        </span>
+      </button>
+      <button class="action-card" type="button"
+              (click)="transactionError = ''; transactionMessage = ''">
+        <span>
+          <strong>Transfer Money</strong>
+          Send money between accounts
+        </span>
+      </button>
+    </div>
+
+    <div class="banking-forms">
+      <!-- Deposit -->
+      <form class="form-card" (ngSubmit)="deposit()">
+        <h3>Deposit Money</h3>
+
+        <label for="depositAccount">Select account</label>
+        <select id="depositAccount" name="depositAccount"
+                [(ngModel)]="selectedAccountId" required>
+          <option [ngValue]="null" disabled>Select an account</option>
+          <option *ngFor="let account of accounts"
+                  [ngValue]="account.id">
+            {{ account.accountNumber }} — ₹{{ account.balance | number:'1.2-2' }}
+          </option>
+        </select>
+
+        <label for="depositAmount">Amount (₹)</label>
+        <input id="depositAmount" name="depositAmount"
+               type="number" min="0.01" step="0.01"
+               [(ngModel)]="depositAmount"
+               placeholder="Enter deposit amount" required>
+
+        <button type="submit" [disabled]="isSubmitting || accounts.length === 0">
+          Deposit
+        </button>
+      </form>
+
+      <!-- Withdrawal -->
+      <form class="form-card" (ngSubmit)="withdraw()">
+        <h3>Withdraw Money</h3>
+
+        <label for="withdrawAccount">Select account</label>
+        <select id="withdrawAccount" name="withdrawAccount"
+                [(ngModel)]="selectedAccountId" required>
+          <option [ngValue]="null" disabled>Select an account</option>
+          <option *ngFor="let account of accounts"
+                  [ngValue]="account.id">
+            {{ account.accountNumber }} — ₹{{ account.balance | number:'1.2-2' }}
+          </option>
+        </select>
+
+        <label for="withdrawalAmount">Amount (₹)</label>
+        <input id="withdrawalAmount" name="withdrawalAmount"
+               type="number" min="0.01" step="0.01"
+               [(ngModel)]="withdrawalAmount"
+               placeholder="Enter withdrawal amount" required>
+
+        <button type="submit" [disabled]="isSubmitting || accounts.length === 0">
+          Withdraw
+        </button>
+      </form>
+
+      <!-- Transfer -->
+      <form class="form-card" (ngSubmit)="transfer()">
+        <h3>Transfer Money</h3>
+
+        <label for="fromAccount">From account</label>
+        <select id="fromAccount" name="fromAccount"
+                [(ngModel)]="selectedAccountId" required>
+          <option [ngValue]="null" disabled>Select source account</option>
+          <option *ngFor="let account of accounts"
+                  [ngValue]="account.id">
+            {{ account.accountNumber }}
+          </option>
+        </select>
+
+        <label for="toAccount">To account</label>
+        <select id="toAccount" name="toAccount"
+                [(ngModel)]="transferToAccountId" required>
+          <option [ngValue]="null" disabled>Select destination account</option>
+          <option *ngFor="let account of accounts"
+                  [ngValue]="account.id">
+            {{ account.accountNumber }}
+          </option>
+        </select>
+
+        <label for="transferAmount">Amount (₹)</label>
+        <input id="transferAmount" name="transferAmount"
+               type="number" min="0.01" step="0.01"
+               [(ngModel)]="transferAmount"
+               placeholder="Enter transfer amount" required>
+
+        <button type="submit" [disabled]="isSubmitting || accounts.length < 2">
+          Transfer
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Transaction history -->
+  <section class="content-card">
+    <div class="section-heading">
+      <div>
+        <h2>Recent Transactions</h2>
+        <p>Review your latest account activity.</p>
+      </div>
+      <button type="button" class="refresh-btn" (click)="loadTransactions()"
+              [disabled]="transactionsLoading">
+        Refresh
+      </button>
+    </div>
+
+    <p *ngIf="transactionsError" class="error-message">
+      {{ transactionsError }}
+    </p>
+
+    <div class="table-wrapper" *ngIf="transactions.length > 0; else noTransactions">
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of transactions">
+            <td>{{ transaction.id ?? '—' }}</td>
+            <td>{{ transaction.transactionType ?? transaction.type ?? 'Transaction' }}</td>
+            <td>
+              {{ transaction.amount != null
+                  ? ('₹' + (transaction.amount | number:'1.2-2'))
+                  : '—' }}
+            </td>
+            <td>{{ transaction.status ?? '—' }}</td>
+            <td>
+              {{ (transaction.transactionDate ?? transaction.createdAt)
+                  ? ((transaction.transactionDate ?? transaction.createdAt)
+                      | date:'dd MMM yyyy')
+                  : '—' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noTransactions>
+      <p *ngIf="transactionsError">Transactions could not be loaded.</p>
+      <p *ngIf="!transactionsError">No transactions to display yet.</p>
+    </ng-template>
+  </section>
+</main>

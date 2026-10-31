@@ -1,0 +1,57 @@
+
+<div class="page">
+  <header>
+    <h1>BankingEase</h1>
+    <nav>
+      <a routerLink="/dashboard">Dashboard</a>
+      <a routerLink="/loans">Loans</a>
+      <button (click)="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main>
+    <h2>My Investments</h2>
+    <p>Review your available investment records and their status.</p>
+
+    <p *ngIf="loading">Loading investments...</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="table-wrapper" *ngIf="!loading && !errorMessage">
+      <table *ngIf="investments.length > 0; else emptyInvestments">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Investment Details</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let investment of investments">
+            <td>{{ investment.id ?? '—' }}</td>
+            <td>
+              {{ investment.investmentType ?? investment.name ?? 'Investment' }}
+            </td>
+            <td>
+              {{ investment.amount ?? investment.investmentAmount ?? '—' }}
+            </td>
+            <td>
+              <span class="status">
+                {{ investment.status ?? 'Active' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyInvestments>
+        <p>No investment records found.</p>
+      </ng-template>
+    </div>
+
+    <button class="refresh" (click)="loadInvestments()">
+      Refresh Investments
+    </button>
+  </main>
+</div>

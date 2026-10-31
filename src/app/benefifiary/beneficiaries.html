@@ -1,0 +1,113 @@
+
+<main class="feature-page">
+  <header class="page-header">
+    <div>
+      <p class="brand-label">BankingEase</p>
+      <h1>Beneficiaries</h1>
+      <p>Manage the people and accounts you send money to.</p>
+    </div>
+    <a routerLink="/dashboard">Back to Dashboard</a>
+  </header>
+
+  <section class="feature-card">
+    <h2>Add a beneficiary</h2>
+
+    <form (ngSubmit)="addBeneficiary()">
+      <label for="userId">Your User ID</label>
+      <input
+        id="userId"
+        name="userId"
+        type="number"
+        min="1"
+        [(ngModel)]="userId"
+        required
+      >
+
+      <label for="beneficiaryName">Beneficiary name</label>
+      <input
+        id="beneficiaryName"
+        name="beneficiaryName"
+        [(ngModel)]="beneficiaryName"
+        required
+      >
+
+      <label for="accountNumber">Account number</label>
+      <input
+        id="accountNumber"
+        name="accountNumber"
+        [(ngModel)]="accountNumber"
+        required
+      >
+
+      <label for="bankName">Bank name</label>
+      <input
+        id="bankName"
+        name="bankName"
+        [(ngModel)]="bankName"
+        required
+      >
+
+      <label for="ifscCode">IFSC code</label>
+      <input
+        id="ifscCode"
+        name="ifscCode"
+        [(ngModel)]="ifscCode"
+        required
+      >
+
+      @if (errorMessage) {
+        <p class="error-message" role="alert">{{ errorMessage }}</p>
+      }
+
+      @if (successMessage) {
+        <p class="success-message" role="status">{{ successMessage }}</p>
+      }
+
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Saving…' : 'Add Beneficiary' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="feature-card">
+    <div class="section-heading">
+      <h2>Saved beneficiaries</h2>
+      <button type="button" class="secondary-button"
+        (click)="loadBeneficiaries()">Refresh</button>
+    </div>
+
+    @if (loading) {
+      <p>Loading beneficiaries…</p>
+    } @else if (beneficiaries.length === 0) {
+      <p>No beneficiaries found.</p>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Account number</th>
+              <th>Bank</th>
+              <th>IFSC</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of beneficiaries; track item.id) {
+              <tr>
+                <td>{{ item.beneficiaryName }}</td>
+                <td>{{ item.accountNumber }}</td>
+                <td>{{ item.bankName }}</td>
+                <td>{{ item.ifscCode }}</td>
+                <td>
+                  <button type="button" class="delete-button"
+                    (click)="deleteBeneficiary(item.id)">Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>

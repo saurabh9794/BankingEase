@@ -1,0 +1,142 @@
+
+<div class="login-page">
+  <div class="background-shape shape-one"></div>
+  <div class="background-shape shape-two"></div>
+
+  <header class="topbar">
+    <a routerLink="/login" class="brand">
+      <span class="brand-icon">B</span>
+      <span>Banking<span class="brand-light">Ease</span></span>
+    </a>
+
+    <div class="secure-label">
+      <span class="secure-dot"></span>
+      Secure Online Banking
+    </div>
+  </header>
+
+  <main class="login-layout">
+    <section class="welcome-panel">
+      <div class="eyebrow">
+        <span class="eyebrow-line"></span>
+        YOUR FINANCES, SIMPLIFIED
+      </div>
+
+      <h1>Bank smarter.<br />Live <span>better.</span></h1>
+
+      <p class="welcome-description">
+        Welcome to BankingEase. Manage your accounts, transfer money,
+        track transactions and take control of your finances in one place.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">↗</span>
+          <div>
+            <strong>Easy money transfers</strong>
+            <p>Move money between your accounts with ease.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-icon">₹</span>
+          <div>
+            <strong>Track your finances</strong>
+            <p>View balances and transaction history in one place.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-icon">✓</span>
+          <div>
+            <strong>Bank with confidence</strong>
+            <p>A simple, convenient banking experience.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="welcome-footer">
+        Banking made simpler, every day.
+      </p>
+    </section>
+
+    <section class="login-card">
+      <div class="mobile-brand">
+        <span class="brand-icon">B</span>
+        <span>Banking<span class="brand-light">Ease</span></span>
+      </div>
+
+      <div class="card-heading">
+        <span class="welcome-badge">WELCOME BACK</span>
+        <h2>Sign in to your account</h2>
+        <p>Enter your details to access your banking dashboard.</p>
+      </div>
+
+      <form (ngSubmit)="login()">
+        <div class="form-field">
+          <label for="email">Email address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉</span>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              [(ngModel)]="email"
+              placeholder="you@example.com"
+              autocomplete="username"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">▣</span>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+        </div>
+
+        <p *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </p>
+
+        <button
+          type="submit"
+          class="sign-in-button"
+          [disabled]="isSubmitting"
+        >
+          <span *ngIf="isSubmitting" class="spinner"></span>
+          <span>{{ isSubmitting ? 'Signing in...' : 'Sign in securely' }}</span>
+          <span *ngIf="!isSubmitting" class="button-arrow">→</span>
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>NEW TO BANKINGEASE?</span>
+      </div>
+
+      <a routerLink="/register" class="register-button">
+        Create an account <span>→</span>
+      </a>
+
+      <div class="security-note">
+        <span class="lock-icon">▣</span>
+        Your banking session is protected by authentication.
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <span>© 2026 BankingEase</span>
+    <span>Simple. Secure. Convenient.</span>
+  </footer>
+</div>

@@ -1,0 +1,53 @@
+
+<div class="page">
+  <header>
+    <h1>BankingEase</h1>
+    <nav>
+      <a routerLink="/dashboard">Dashboard</a>
+      <a routerLink="/investments">Investments</a>
+      <button (click)="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main>
+    <h2>My Loans</h2>
+    <p>View your loan applications and their current status.</p>
+
+    <p *ngIf="loading">Loading loans...</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="table-wrapper" *ngIf="!loading && !errorMessage">
+      <table *ngIf="loans.length > 0; else emptyLoans">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Loan Details</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let loan of loans">
+            <td>{{ loan.id ?? '—' }}</td>
+            <td>{{ loan.loanType ?? loan.loanName ?? 'Loan' }}</td>
+            <td>
+              {{ loan.amount ?? loan.loanAmount ?? '—' }}
+            </td>
+            <td>
+              <span class="status">
+                {{ loan.status ?? 'Pending' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyLoans>
+        <p>No loan records found.</p>
+      </ng-template>
+    </div>
+
+    <button class="refresh" (click)="loadLoans()">Refresh Loans</button>
+  </main>
+</div>

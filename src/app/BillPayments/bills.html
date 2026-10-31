@@ -1,0 +1,111 @@
+
+<main class="feature-page">
+  <header class="page-header">
+    <div>
+      <p class="brand-label">BankingEase</p>
+      <h1>Bill Payments</h1>
+      <p>Pay your bills directly from your bank account.</p>
+    </div>
+    <a routerLink="/dashboard">Back to Dashboard</a>
+  </header>
+
+  <section class="feature-card">
+    <h2>Pay a bill</h2>
+
+    <form (ngSubmit)="payBill()">
+      <label for="accountId">Pay from account</label>
+      <select
+        id="accountId"
+        name="accountId"
+        [(ngModel)]="accountId"
+        required
+      >
+        @for (account of accounts; track account.id) {
+          <option [ngValue]="account.id">
+            {{ account.accountNumber }} — {{ account.accountType }}
+            (Balance: {{ account.balance | number:'1.2-2' }})
+          </option>
+        }
+      </select>
+
+      <label for="billType">Bill type</label>
+      <select id="billType" name="billType" [(ngModel)]="billType" required>
+        @for (type of billTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+
+      <label for="billNumber">Bill / Consumer number</label>
+      <input
+        id="billNumber"
+        name="billNumber"
+        [(ngModel)]="billNumber"
+        required
+      >
+
+      <label for="amount">Amount (₹)</label>
+      <input
+        id="amount"
+        name="amount"
+        type="number"
+        min="0.01"
+        step="0.01"
+        [(ngModel)]="amount"
+        required
+      >
+
+      @if (errorMessage) {
+        <p class="error-message" role="alert">{{ errorMessage }}</p>
+      }
+
+      @if (successMessage) {
+        <p class="success-message" role="status">{{ successMessage }}</p>
+      }
+
+      <button type="submit" [disabled]="paying || accounts.length === 0">
+        {{ paying ? 'Processing…' : 'Pay Bill' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="feature-card">
+    <div class="section-heading">
+      <h2>Payment history</h2>
+      <button type="button" class="secondary-button"
+        (click)="loadBills()">Refresh</button>
+    </div>
+
+    @if (loading) {
+      <p>Loading payment history…</p>
+    } @else if (bills.length === 0) {
+      <p>No bill payments found.</p>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Bill type</th>
+              <th>Bill number</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Payment date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (bill of bills; track bill.id) {
+              <tr>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.billType }}</td>
+                <td>{{ bill.billNumber }}</td>
+                <td>₹{{ bill.amount | number:'1.2-2' }}</td>
+                <td>{{ bill.status || '—' }}</td>
+                <td>{{ bill.paymentDate || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>
